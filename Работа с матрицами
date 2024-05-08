@@ -1,0 +1,340 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+using namespace std;
+
+int err();
+int randomInt(int min, int max);
+bool isValidInput();
+int sumOfMinMax(int arr[], int size);
+int sumOfMinMax(int arr[], int size, int ran);
+template<typename T>
+void ZeroOnePrint(T matrix, int rows, int cols);
+int replaceNonDiagonalZeroesDyn(int** matrix, int rows, int cols);
+int replaceNonDiagonalZeroesDyn(int** matrix, int rows, int cols, int ran);
+template <typename T>
+int replaceNonDiagonalZeroes(T matrix, int rows, int cols);
+template <typename T>
+int replaceNonDiagonalZeroes(T matrix, int rows, int cols, int ran);
+
+int main() {
+    int a = 0;
+    while (a == 0) {
+        setlocale(LC_ALL, "Russian");
+        srand(time(nullptr)); 
+
+        int choiceTask;
+        cout << "Выберите\n";
+        cout << "1 - Одномерный массив.\n";
+        cout << "2 - Двумерный массив.\n";
+        cout << "3 - Выход\n";
+        cin >> choiceTask;
+        if (choiceTask == 3) return 0;
+        while (choiceTask != 1 && choiceTask != 2) {
+            err();
+            cin >> choiceTask;
+        }
+
+        int choiceInput;
+        cout << "Как хотите заполнить массив?\n";
+        cout << "1 - Ручной ввод\n";
+        cout << "2 - Рандомом\n";
+        cout << "3 - Выход\n";
+        cin >> choiceInput;
+        if (choiceInput == 3) return 0;
+        while (choiceInput != 1 && choiceInput != 2) {
+            err();
+            cin >> choiceInput;
+        }
+
+        int choiceDataType;
+        cout << "Выберите каким массивом обрабатывать:\n";
+        if (choiceTask == 2) {
+            cout << "1 - Статический массив(5x5)\n";
+        }
+        else {
+            cout << "1 - Статический массив(11)\n";
+        }
+        cout << "2 - Динамический массив\n";
+        cout << "3 - Вектор\n";
+        cout << "4 - Выход\n";
+        cin >> choiceDataType;
+        if (choiceDataType == 4) return 0;
+        while (choiceDataType != 1 && choiceDataType != 2 && choiceDataType != 3) {
+            err();
+            cin >> choiceDataType;
+        }
+
+        int size;
+        switch (choiceTask) {
+        case 1: {
+            if (choiceDataType != 1) {
+                cout << "Введите размер массива: ";
+                cin >> size;
+                while (!isValidInput || size <= 0 || cin.peek() != '\n') {
+                    err();
+                    cin >> size;
+                }
+            }
+            int ran = 0;
+            switch (choiceDataType) {
+            case 1: {
+                const int size = 11;
+                int arr[size];
+                switch (choiceInput) {
+                case 1: {
+                    sumOfMinMax(arr, size);
+                    break;
+                }
+                case 2: {
+                    sumOfMinMax(arr, size, ran);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+                break;
+            }
+            case 2: {
+                int* arr = new int[size];
+                switch (choiceInput) {
+                case 1: {
+                    sumOfMinMax(arr, size);
+                    break;
+                }
+                case 2: {
+                    sumOfMinMax(arr, size, ran);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+                delete[] arr;
+                break;
+            }
+            case 3: {
+                vector<int> arr(size);
+                switch (choiceInput) {
+                case 1: {
+                    sumOfMinMax(arr.data(), size);
+                    break;
+                }
+                case 2: {
+                    sumOfMinMax(arr.data(), size, ran);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+                break;
+            }
+            default:
+                cout << "Ошибка: неверный выбор типа данных.\n";
+            }
+            break;
+        }
+        case 2: {
+            srand(time(nullptr)); // Инициализация генератора случайных чисел
+            int rows, cols;
+            if (choiceDataType != 1) {
+                cout << "Введите количество строк и столбцов массива: ";
+                cin >> rows >> cols;
+                while (!isValidInput || rows <= 0 || cols <= 0 || cin.peek() != '\n') {
+                    err();
+                    cin >> rows >> cols;
+                }
+            }
+            int r = 0;
+            switch (choiceDataType) {
+            case 1: {
+                cout << "Исходный массив: " << endl;
+                int rows = 5;
+                int cols = 5;
+
+                int staticMatrix[5][5];
+                switch (choiceInput) {
+                case 1: {
+                    replaceNonDiagonalZeroes(staticMatrix, rows, cols);
+                    break;
+                }
+                case 2: {
+                    replaceNonDiagonalZeroes(staticMatrix, rows, cols, r);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+                break;
+            }
+            case 2: {
+                cout << "Исходный массив: " << endl;
+
+                int** dynamicMatrix = new int* [rows];
+                switch (choiceInput) {
+                case 1: {
+                    replaceNonDiagonalZeroesDyn(dynamicMatrix, rows, cols);
+                    break;
+                }
+                case 2: {
+                    replaceNonDiagonalZeroesDyn(dynamicMatrix, rows, cols, r);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+
+                // Освобождаем выделенную память для динамического массива
+                for (int i = 0; i < rows; ++i) {
+                    delete[] dynamicMatrix[i];
+                }
+                delete[] dynamicMatrix;
+                break;
+            }
+            case 3: {
+                cout << "Исходный массив: " << endl;
+
+                vector<vector<int>> vectorMatrix(rows, vector<int>(cols));
+                switch (choiceInput) {
+                case 1: {
+                    replaceNonDiagonalZeroes(vectorMatrix.data(), rows, cols);
+                    break;
+                }
+                case 2: {
+                    replaceNonDiagonalZeroes(vectorMatrix.data(), rows, cols, r);
+                    break;
+                }
+                default:
+                    cout << "Ошибка: неверный выбор типа данных.\n";
+                }
+
+                break;
+            }
+            default:
+                cout << "Ошибка: неверный выбор типа данных.\n";
+            }
+            break;
+        }
+        }
+        cout << "Программа была выполнена. " << endl;
+        cout << "1 - Продолжить." << endl;
+        cout << "2 - Выход." << endl;
+        int end;
+        cin >> end;
+        if (end == 2) return 0;
+        while (end != 1) {
+            err();
+            cin >> end;
+        }
+    }
+    return 0;
+}
+
+int err() {
+    cin.clear(); // Очищаем флаг ошибки ввода
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищаем буфер ввода
+    cout << "Ошибка: некорректный ввод. Число должно быть положительным и натуральным или 0. Повторите попытку." << endl;
+    return 0;
+}
+// Функция для генерации случайного числа в диапазоне [min, max]
+int randomInt(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+bool isValidInput() {
+    if (cin.fail()) { // Проверяем флаг ошибки ввода
+        err();
+        return false; // Возвращаем false, чтобы указать на некорректный ввод
+    }
+    return true; // Возвращаем true, если ввод корректный
+}
+
+// Функция для нахождения суммы минимального и максимального элементов в массиве
+int sumOfMinMax(int arr[], int size) {
+    cout << "Введите " << size << " элементов массива:\n";
+    for (int i = 0; i < size; ++i) {
+        cin >> arr[i];
+    }
+    sort(arr, arr + size);
+    cout << "Сумма минимального и максимального значения: " << arr[0] + arr[size - 1] << endl;
+    return 0; // Сумма минимального и максимального элементов
+}
+int sumOfMinMax(int arr[], int size, int ran) {
+    for (int i = 0; i < size; ++i) {
+        arr[i] = randomInt(1, 50);
+        cout << arr[i] << " ";
+    }
+    sort(arr, arr + size);
+    cout << "Сумма минимального и максимального значения: " << arr[0] + arr[size - 1] << endl;
+    return 0; // Сумма минимального и максимального элементов
+}
+
+template<typename T>
+void ZeroOnePrint(T matrix, int rows, int cols) {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if ((i != j) && (matrix[i][j] == 0)) {
+                matrix[i][j] = 1; // Заменяем нулевые элементы, не стоящие на главной диагонали, единицами
+            }
+        }
+    }
+    cout << "\n Получившийся массив \n" << " "; // Вывод матрицы
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << matrix[i][j] << " "; 
+        }
+        cout << "\n";
+    }
+}
+
+int replaceNonDiagonalZeroesDyn(int** matrix, int rows, int cols) {     //Заполение двумерного динамического руками
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = new int[cols];
+        for (int j = 0; j < cols; ++j) {
+            cin >> matrix[i][j];
+        }
+    }
+    ZeroOnePrint(matrix, rows, cols);
+    return 0;
+
+}
+
+int replaceNonDiagonalZeroesDyn(int** matrix, int rows, int cols, int ran) {      //Заполение двумерного динамического массива рандомом
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = new int[cols]; 
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j] = randomInt(0, 50); 
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    ZeroOnePrint(matrix, rows, cols);
+    return 0;
+}
+
+template <typename T>
+int replaceNonDiagonalZeroes(T matrix, int rows, int cols) {      //Заполение двумерного массива руками
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cin >> matrix[i][j];
+        }
+    }
+    ZeroOnePrint(matrix, rows, cols);
+    return 0;
+}
+
+template <typename T>
+int replaceNonDiagonalZeroes(T matrix, int rows, int cols, int ran) {        //Заполение двумерного массива рандомом
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            matrix[i][j] = randomInt(0, 50); 
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    ZeroOnePrint(matrix, rows, cols);
+    return 0;
+}
