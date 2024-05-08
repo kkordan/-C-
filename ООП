@@ -1,0 +1,114 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Родительский класс "Персонаж"
+class Character {
+    string name;
+    int health;
+
+public:
+    Character(string n, int h) : name(n), health(h) {}
+
+    void takeDamage(int damage) {
+        health -= damage;
+        cout << name << " получил " << damage << " урона. Сейчас здоровье: " << health << endl;
+    }
+
+    void heal(int amount) {
+        health += amount;
+        cout << name << " востановлено " << amount << " здоровья. Сейчас здоровье: " << health << endl;
+    }
+
+    void getInfo() {
+        cout << "Имя: " << name << ", Здоровье: " << health << endl;
+    }
+    string getName() const {
+        return name;
+    }
+
+    int getHealth() const {
+        return health;
+    }
+
+    virtual void performAction() {
+        cout << name << " Делоет общее дело." << endl;
+    }
+
+    virtual void defend() {
+        cout << name << " Защищает!" << endl;
+    }
+};
+
+// Первый дочерний класс "Воин"
+class Warrior : public Character {
+private:
+    int strength;
+    int armor;
+
+public:
+    Warrior(string n, int h, int s, int a) : Character(n, h), strength(s), armor(a) {}
+
+    void charge() {
+        cout << getName() << " Атакует!" << endl;
+    }
+
+    void block() {
+        cout << getName() << " Блокирует атаку!" << endl;
+    }
+
+    void performAction() {
+        cout << getName() << " выполняет боевое действие." << endl;
+    }
+
+    void defend() {
+        cout << getName() << " поднимает щит!" << endl;
+    }
+};
+
+// Второй дочерний класс "Маг"
+class Mage : public Character {
+private:
+    int mana;
+    int spellPower;
+
+public:
+    Mage(string n, int h, int m, int sp) : Character(n, h), mana(m), spellPower(sp) {}
+
+    void castSpell() {
+        cout << getName() << " активирует заклинание!" << endl;
+    }
+
+    void meditate() {
+        cout << getName() << " регенирирует манну!" << endl;
+    }
+
+    void performAction() {
+        cout << getName() << " Выполняет магическое действие." << endl;
+    }
+
+    void defend() {
+        cout << getName() << " Делает волшебный барьер" << endl;
+    }
+};
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    Character* player1 = new Warrior("Петя", 100, 20, 15);
+    Character* player2 = new Mage("Вася", 80, 50, 25);
+
+    player1->getInfo();
+    player1->performAction();
+    player1->defend(); 
+
+    player2->getInfo();
+    player2->performAction();
+    player2->defend();
+
+    static_cast<Mage*>(player2)->meditate();
+    static_cast<Warrior*>(player1)->block();
+
+    return 0;
+}
